@@ -1,8 +1,13 @@
 # Notes: Golang Advanced Concurrency Concepts
 
 The tutorial consist of the following modules (in sense of Go Modules):
-* `context/server`
-* `context/cancellation`
+* `context/cancel1`
+* `context/cancel2`
+* `context/cancel3`
+* `context/emit`
+* `context/listen`
+* `context/timeout`
+* `context/value`
 * `error_group`
 * `errors_in_waitgroup`
 * `gosched`
@@ -22,6 +27,34 @@ For example, we would like to signal a process cancellation of a long-running HT
 There are two sides to the context cancellation, that can be implemented: 
 * Listening for the cancellation event, 
 * Emitting the cancellation event.
+
+Things to remember about `context`:
+* A `context` object can be cancelled only once
+* Use it when you want to actually cancell an operation, not when you want to propagate errors
+* Wrapping a cancellable context with `WithTimeout` or other functions make the context object cancellable in too many ways.
+* Pass a child context to a goroutine you start or pass an independent context object. Here is an example:
+```
+func parent(rootCtx context.Context) {
+	ctx, cancel := context.WithCancel(rootCtx)
+	defer cancel()
+
+	someArg := "loremipsum"
+	go child(context.Background(), someArg)
+}
+```
+Note: calling `cancel()` in the parent goroutine may cancel the child goroutine because there is no synchronization of the child - `parent()` (and thus its `defer`) does not wait for `child()`.
+* do not pass the `cancel()` function downstream. It will result in the invoker of the cancellation function not knowning what the upstream impact of cancelling the context may be eg. there may be other contexts that are derived from the cancelled context.
+
+
+Context factory methods:
+* for a parent/new context: `Background()`
+* for a cancellation context:  `WithCancel()`
+* for a time-limited context: `WithTimeout()`, `WithDeadline()`
+* for a key-value storing context: `WithValue()`
+* for an empty context:`TODO()`.
+
+How to accept/use `context` objects in downstream:
+
 
 
 ### `context/listen`
