@@ -1,4 +1,4 @@
-# Notes: Golang Advanced Concurrency Concepts
+# Notes: Golang Advanced Concurrency Concepts and Introduction to Golang Testing
 
 The tutorial consist of the following modules (in sense of Go Modules):
 * `context/cancel1`
@@ -13,6 +13,7 @@ The tutorial consist of the following modules (in sense of Go Modules):
 * `gosched`
 * `once`
 * `pipelines`.
+There are additional modules related to testing (not to Go's Concurrency) in folder: `testing`.
 
 To run/build any of them:
 ```
